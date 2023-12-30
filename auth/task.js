@@ -1,43 +1,51 @@
-// const form = document.querySelector('form');
-const rownName = document.getElementsByName('login')[0];
-const rowPassword = document.getElementsByName('password')[0];
+const form = document.querySelector('form');
 const btn = document.getElementById('signin__btn');
+const userId = document.getElementById('user_id')
 const welcome = document.getElementById('welcome');
-const userId = document.getElementById('user_id');
+const signin = document.getElementById('signin');
 
+const saveId = localStorage.getItem('saveId');
+
+if (saveId) {
+    welcome.classList.add('welcome_active');
+    signin.classList.remove('signin_active');
+    userId.textContent = saveId;
+} else {
+    signin.classList.add('signin_active');
+}   
 
 // обработчик события кнопки
 btn.addEventListener('click', (event) => {
     event.preventDefault();
 
-    const formData = new FormData();
-    console.log(rownName.value)
-    formData.append('login', rownName.value);
-    formData.append('password', rowPassword.value);
+    const formData = new FormData(form);
 
     const xhr = new XMLHttpRequest();
 
+    xhr.responseType = 'json';
+
     xhr.open('POST', 'https://students.netoservices.ru/nestjs-backend/auth');
 
+    
+
     // обрабатываем событие отправки на сервер и получение ответа
+
     xhr.addEventListener('load', () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-            const response = JSON.parse(xhr.responseText);
-            if (response.success) {
-                console.log('Авторизация успешна!');
-                console.log('ID пользователя:', response.user_id);
 
-                // добавляем класс актив
-                welcome.classList.add('welcome_active');
+        const response = xhr.response;
 
-                userId.textContent = response.user_id;
-            } else {
-                console.error('Авторизация не удалась. Ответ сервера:', response);
-            }
+        if (response.success) {
+            // добавляем класс актив
+            welcome.classList.add('welcome_active');
+            signin.classList.remove('signin_active');
+
+            userId.textContent = response.user_id;
+            localStorage.setItem('saveId', response.user_id);
         } else {
             console.error('Ошибка при отправке данных на сервер:', xhr.statusText);
-            console.error('Ответ сервера:', xhr.responseText);
-        }
+            localStorage.removeItem('saveId');
+        }              
     })
     xhr.send(formData);
+    form.reset();
 })
