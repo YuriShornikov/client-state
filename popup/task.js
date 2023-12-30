@@ -1,7 +1,7 @@
 const modal = document.querySelector('.modal');
 const modalClose = modal.querySelector('.modal__close');
 
-const delActive = sessionStorage.getItem('save');
+const delActive = localStorage.getItem('save');
 
 // проверка на закрытие окна
 if (!delActive) {
@@ -12,6 +12,6 @@ if (!delActive) {
 modalClose.addEventListener('click', () => {
     modal.classList.remove('modal_active');
 
-    sessionStorage.setItem('save', 'true');
+    localStorage.setItem('save', 'true');
 })
 
