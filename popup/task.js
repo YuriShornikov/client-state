@@ -1,17 +1,33 @@
 const modal = document.querySelector('.modal');
 const modalClose = modal.querySelector('.modal__close');
 
-const delActive = localStorage.getItem('save');
+const saveCookie = getCookie('save');
 
-// проверка на закрытие окна
-if (!delActive) {
+if (saveCookie !== 'false') {
     modal.classList.add('modal_active');
 }
 
+
 // обработка события
 modalClose.addEventListener('click', () => {
-    modal.classList.remove('modal_active');
+    const removeClass = modal.classList.remove('modal_active');
 
-    localStorage.setItem('save', 'true');
+    setCookie('save', 'false');
 })
 
+// функция для установки значения в куки
+function setCookie(name, value) {
+    document.cookie = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+}
+
+// функция извлечения куки
+function getCookie(name) {
+    const pairs = document.cookie.split('; ');
+    const cookie = pairs.find(i => i.startsWith(name + '='));
+
+    if (cookie) {
+        return cookie.substring(name.length + 1);
+    }
+
+    return null;
+}
